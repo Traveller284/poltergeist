@@ -1,0 +1,20 @@
+# Dependencies and build output
+node_modules/
+dist/
+coverage/
+.vite/
+
+# Env and secrets (the repo is public)
+.env
+.env.*
+!.env.example
+*.pem
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+*.log
+
+# NOTE: do NOT add .kiro/ here. The hackathon rules require /.kiro at the repo root
+# and say ignoring it can disqualify the submission.
