@@ -66,19 +66,27 @@ Tasks are ordered. Complete each before starting the next. Mark a task done by c
 
 ---
 
-## Task 6 — Correctness properties (property-based tests)
+## Task 6 — Correctness properties
 
-Write property-based tests in `packages/core/src/bisect/__tests__/bisect.property.test.ts` using fast-check and the fixture repo from Task 2. Each test name must include the requirement IDs it covers.
+**`findFirstFailing.property.test.ts`** — fast-check property tests for the pure binary-search kernel, 200 runs each:
 
-- [ ] **[REQ-BE-07, REQ-BE-08]** For each of the three planted regressions, call `bisect` with a good commit before the regression and the final commit as `badCommit`. Assert the returned SHA fails the property and its first parent passes.
-- [ ] **[REQ-BE-09]** Call `bisect` twice with identical inputs. Assert both returned SHAs are equal.
-- [ ] **[REQ-BE-11]** Record a snapshot of the target repo's `HEAD` (`git rev-parse HEAD`), index hash (`git diff-index HEAD`), and a checksum of each tracked file before calling `bisect`. Assert they are identical after the call.
-- [ ] **[REQ-BE-12]** Run `bisect` against a `badCommit` whose `propertyId` matches no test. Assert `PropertyNotFoundError` is thrown and the worktree is gone.
-- [ ] **[REQ-BE-13]** Pass `goodCommit === badCommit` (same SHA for both). Assert `InvalidRangeError` is thrown.
-- [ ] **[REQ-BE-14]** Pass a `goodCommit` at a commit that is known to fail the property. Assert `GoodCommitFailsError` is thrown.
-- [ ] **[REQ-BE-15]** Pass a `badCommit` at a commit that is known to pass. Assert `BadCommitPassesError` is thrown.
+- [ ] **[REQ-BE-05]** For any history length `n` (1–200) and any break index `k`, assert `isFailing` is called at most `ceil(log2(n))` times.
+- [ ] **[REQ-BE-07, REQ-BE-08]** Assert `findFirstFailing` returns exactly index `k` (the first failing commit), and that `isFailing(commits[k])` is true while `isFailing(commits[k-1])` is false (when `k > 0`).
+- [ ] **[REQ-BE-09]** Assert two calls with identical `commits` and `isFailing` return the same index.
 
-**Covers:** REQ-BE-07, REQ-BE-08, REQ-BE-09, REQ-BE-11, REQ-BE-12, REQ-BE-13, REQ-BE-14, REQ-BE-15.
+**`bisect.property.test.ts`** — integration tests for `bisect()` against the haunted-repo fixture. Each test name must include the REQ-BE-xx IDs it covers. Never issue `git checkout` against the fixture repo's working tree; use a throwaway worktree or verify via the existing worktree that `bisect()` already creates.
+
+- [ ] **[REQ-BE-01]** Call `bisect` and assert the returned `BisectResult` has `firstBadCommit` with `sha`, `author`, `email`, `date`, and `message`.
+- [ ] **[REQ-BE-06]** Assert `firstBadCommit.sha` is a 40-char hex string and `firstBadCommit.date` matches ISO 8601.
+- [ ] **[REQ-BE-07, REQ-BE-08]** For each of the three planted regressions, call `bisect`. Spin up a throwaway worktree to run the property at the returned SHA (must fail) and at its first parent (must pass). Assert the returned SHA equals the known regression commit.
+- [ ] **[REQ-BE-09]** Call `bisect` twice with identical inputs concurrently. Assert both returned SHAs are equal.
+- [ ] **[REQ-BE-11]** Snapshot the target repo's `HEAD`, `git diff-index HEAD`, and all tracked blob SHAs before calling `bisect`. Assert the snapshot is identical after the call.
+- [ ] **[REQ-BE-12]** Assert `PropertyNotFoundError` is thrown when `propertyId` matches no test, and that the worktree count is unchanged afterwards.
+- [ ] **[REQ-BE-13]** Assert `InvalidRangeError` is thrown when `goodCommit === badCommit`.
+- [ ] **[REQ-BE-14]** Assert `GoodCommitFailsError` is thrown when the property already fails at `goodCommit`.
+- [ ] **[REQ-BE-15]** Assert `BadCommitPassesError` is thrown when the property still passes at `badCommit`.
+
+**Covers:** REQ-BE-01, REQ-BE-05, REQ-BE-06, REQ-BE-07, REQ-BE-08, REQ-BE-09, REQ-BE-11, REQ-BE-12, REQ-BE-13, REQ-BE-14, REQ-BE-15.
 
 ---
 

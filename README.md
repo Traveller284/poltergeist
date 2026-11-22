@@ -24,6 +24,18 @@ fixtures/haunted-repo/  Demo repo with planted regressions
 docs/                   Build plan and Kiro usage log
 ```
 
+## Running the tests
+
+The engine tests live in `packages/core`. On a fresh clone:
+
+```sh
+cd packages/core
+npm install
+npx vitest run
+```
+
+`npm install` only needs to run once. The first `vitest run` automatically builds `fixtures/haunted-repo` if it is missing, so no other pre-step is required. Expect the full suite to take about 60 seconds because each test run spawns a child Vitest process against the fixture repo.
+
 ## License
 
 MIT, see `LICENSE`.
