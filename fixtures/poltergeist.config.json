@@ -1,0 +1,7 @@
+{
+  "checks": [
+    { "spec": "math-props", "property": "prop-add-commutative" },
+    { "spec": "math-props", "property": "prop-double-is-even" },
+    { "spec": "math-props", "property": "prop-abs-nonneg" }
+  ]
+}
